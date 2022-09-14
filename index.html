@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="img/favicon.ico">
-        <title>My Docs</title>
+        <title>Duplicacy Guide</title>
         <link href="css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/base.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 
                 <!-- Collapsed navigation -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href=".">My Docs</a>
+                    <a class="navbar-brand" href=".">Duplicacy Guide</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -47,28 +47,113 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#welcome-to-mkdocs">Welcome to MkDocs</a></li>
-            <li><a href="#commands">Commands</a></li>
-            <li><a href="#project-layout">Project layout</a></li>
+        <li class="main active"><a href="#introduction">Introduction</a></li>
+        <li class="main "><a href="#installation">Installation</a></li>
+        <li class="main "><a href="#initialize-the-remote-storage-and-repository">Initialize the remote storage and repository</a></li>
+        <li class="main "><a href="#running-the-backup">Running the backup</a></li>
+        <li class="main "><a href="#restoring-backups">Restoring backups</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>
-<p>For full documentation visit <a href="https://mkdocs.org">mkdocs.org</a>.</p>
-<h2 id="commands">Commands</h2>
-<ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs help</code> - Print this help message.</li>
-</ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
-</code></pre></div>
+<h1 id="introduction">Introduction</h1>
+<p><a href="https://duplicacy.com">Duplicacy</a> is state-of-the-art backup tool that has extensive cloud support. It also supports local disks and your own <strong>sftp</strong> servers.     </p>
+<p>Duplicacy is available as a web-based GUI or as a command line tool. 
+The software does require a license but the <strong>command-line interface</strong> (CLI) version is free for personal use.  </p>
+<p>We’ll be using the <strong>CLI</strong> version for this tutorial.</p>
+<h1 id="installation">Installation</h1>
+<p><strong>STEP 1:</strong>   </p>
+<p>Pre-compiled binaries are available for Linux, macOS, and Windows directly from the Duplicacy <a href="https://github.com/gilbertchen/duplicacy/releases">GitHub</a> repository.</p>
+<p>Download the latest version for your system. Currently this is <code>version 2.7.2</code>.</p>
+<pre><code>$ wget https://github.com/gilbertchen/duplicacy/releases/download/v2.7.2/duplicacy_linux_x64_2.7.2
+</code></pre>
+
+<p><strong>STEP 2:</strong>    </p>
+<p>Make the file executable.</p>
+<pre><code>$ chmod +x duplicacy_linux_x64_2.7.2
+</code></pre>
+
+<p><strong>STEP 3:</strong>  </p>
+<p>Rename the file to <strong>duplicacy</strong>.</p>
+<pre><code>$ mv duplicacy_linux_x64_2.7.2 duplicacy
+</code></pre>
+
+<p><strong>STEP 4:</strong>  </p>
+<p>Change the file permissions.</p>
+<pre><code>$ chmod 755 duplicacy
+</code></pre>
+
+<p><strong>STEP 5:</strong>  </p>
+<p>Move the file to the <strong>/usr/bin</strong> directory.</p>
+<pre><code>$ sudo mv duplicacy /usr/bin/
+</code></pre>
+
+<h1 id="initialize-the-remote-storage-and-repository">Initialize the remote storage and repository</h1>
+<p>The <strong>duplicacy init</strong> command is used to initialize the remote storage and the backup directory.</p>
+<pre><code>duplicacy init [command options] &lt;snapshot id&gt; &lt;storage url&gt;
+</code></pre>
+
+<p>The <code>&lt;snapshot id&gt;</code> refers to the name you want to give to your backup job.  <br />
+The <code>&lt;storage url&gt;</code> refers to the remote server and directory path for your backups.</p>
+<p>We will only be using the following options:</p>
+<pre><code>-encrypt, -e          encrypt the storage with a password
+-storage-name &lt;name&gt;  assign a name to the storage
+-repository &lt;path&gt;    initialize a new repository at the specified path
+</code></pre>
+
+<p>An example scenario will make things easier to understand.</p>
+<ol>
+<li>Sftp server hostname: <strong>nacho.local</strong>.</li>
+<li>Directory to be backed up: <strong>/home/curt/Photos</strong>.</li>
+<li>Backup directory on the sftp server: <strong>photobackup</strong>. This refers to the <code>-repository &lt;path&gt;</code> option.</li>
+<li>Backup job name: <strong>photoBackup</strong>. This refers to the <code>&lt;snapshot id&gt;</code> option.</li>
+<li>Remote storage name: <strong>nachostorage</strong>. This refers to the <code>-storage-name &lt;name&gt;</code> option.</li>
+</ol>
+<p>For me, <strong>sftp://curt@nacho.local/photobackup</strong> would be the complete <code>&lt;storage url&gt;</code>.    </p>
+<p><strong>STEP 1:</strong>      </p>
+<p>In duplicacy, the <code>repository</code> refers to the directory that you want to backup. Run the <strong>duplicacy init</strong> command to initialize the remote storage and the backup respository. Here is an example:</p>
+<pre><code>$ duplicacy init -e -storage-name nachostorage -repository /home/curt/Photos photoBackup sftp://curt@nacho.local/photobackup
+</code></pre>
+
+<p>You will see the following prompts:</p>
+<pre><code>Enter SSH password:
+Enter the path of the private key file:
+Enter storage password for sftp://curt@nacho.local/photobackup:
+Re-enter storage password:
+</code></pre>
+
+<ol>
+<li>Hit <code>enter</code> to leave the password blank if you use <strong>ssh</strong> keys.       </li>
+<li>Hit <code>enter</code> to bypass specifying the path to your private <strong>ssh</strong> key. This will be configured later to automate this.   </li>
+<li>Type in a storage password you wish to use.</li>
+</ol>
+<p><strong>STEP 2:</strong>    </p>
+<p><strong>Duplicacy</strong> creates a configuration folder named <strong>.duplicacy</strong> in the current directory after the initialization is finished.   </p>
+<p>Edit the <strong>.duplicacy/preferences</strong> file with a plain text editor to change the <strong>"keys":</strong>&nbsp; line.    </p>
+<p>We'll be specifying the path to our private <strong>ssh</strong> key and <strong>storage password</strong> that was used for the initialization.</p>
+<pre><code>$ vim .duplicacy/preferences
+</code></pre>
+
+<p>Default setting:</p>
+<pre><code>&quot;keys&quot;: null,
+</code></pre>
+
+<p>Using the following format, change the line to include your <strong>storage password</strong> and full path to your private <strong>ssh</strong> key. This is what it would look like for me:</p>
+<pre><code> &quot;keys&quot;: {
+            &quot;password&quot;: &quot;MySecretPassword&quot;,
+            &quot;ssh_key_file&quot;: &quot;/home/curt/.ssh/id_rsa&quot;
+        },
+</code></pre>
+
+<h1 id="running-the-backup">Running the backup</h1>
+<p><strong>STEP 1:</strong>    </p>
+<p>Run the <strong>duplicacy backup</strong> command.</p>
+<pre><code>$ duplicacy backup -stats
+</code></pre>
+
+<h1 id="restoring-backups">Restoring backups</h1>
+<p><strong>STEP 1:</strong></p>
+<p>Run the <strong>duplicacy restore</strong> command to restore files from your backups.</p></div>
         </div>
 
         <footer class="col-md-12">
@@ -151,5 +236,5 @@ docs/
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2022-09-14 17:32:48
+Build Date UTC : 2022-09-14 17:38:28
 -->
