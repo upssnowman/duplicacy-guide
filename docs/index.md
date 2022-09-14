@@ -80,12 +80,10 @@ $ duplicacy init -e -storage-name nachostorage -repository /home/curt/Photos pho
 ~~~
 You will see the following prompts:
 ~~~
-
 Enter SSH password:
 Enter the path of the private key file:
 Enter storage password for sftp://curt@nacho.local/photobackup:
 Re-enter storage password:
-
 ~~~
 
 1. Hit `enter` to leave the password blank if you use **ssh** keys.       
@@ -110,12 +108,10 @@ Default setting:
 
 Using the following format, change the line to include your **storage password** and full path to your private **ssh** key. This is what it would look like for me:
 ~~~
-
 "keys": {
     "password": "MySecretPassword",
     "ssh_key_file": "/home/curt/.ssh/id_rsa"
- },
-
+},
 ~~~
 
 # Running the backup
