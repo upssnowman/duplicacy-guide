@@ -13,7 +13,7 @@ We’ll be using the **CLI** version for this tutorial.
 
 Pre-compiled binaries are available for Linux, macOS, and Windows directly from the Duplicacy [GitHub](https://github.com/gilbertchen/duplicacy/releases) repository.
 
-Download the latest version for your system. Currently this is `version 2.7.2`.
+Download the latest version for your system. Currently the latest version is `version 2.7.2`.
 ~~~
 $ wget https://github.com/gilbertchen/duplicacy/releases/download/v2.7.2/duplicacy_linux_x64_2.7.2
 ~~~
